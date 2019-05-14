@@ -1,0 +1,32 @@
+version: '3.4'
+
+services:
+  demo.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44339
+    ports:
+      - "64245:80"
+      - "44339:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - solr
+    networks:
+      - demo
+
+
+  solr:
+    image: solr
+    ports:
+      - "8983:8983"
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+    networks:
+      - demo
+
+networks:
+  demo:
